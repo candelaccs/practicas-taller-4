@@ -141,10 +141,9 @@ procedure incisoD (a: arbol);
    buscar:= 0
   else
    if (a^.dato.codigo < codigo) then
-    buscar:= buscar (a^.hi, codigo) +1
+    buscar:= 1+ buscar (a^.hi, codigo) + buscar (a^.hd, codigo)
    else
-    if (a^.dato.codigo > codigo) then
-    buscar (a^.hi, codigo);
+    buscar:= buscar (a^.hi, codigo);
  end;
     
 var
@@ -163,11 +162,38 @@ begin
  
 end;
 
-
-
-
-
-
+procedure incisoE (a: arbol);
+ 
+ function total (a: arbol; codigo1: integer; codigo2: integer): real;
+ begin
+  
+  if (a <> nil) then
+   if (a^.dato.codigo > codigo1) and (a^.dato.codigo < codigo2) then
+    total:= a^.dato.totmonto + total (a^.hi, codigo1, codigo2) + total (a^.hd, codigo1,codigo2)
+   else
+    if (a^.dato.codigo < codigo1) then
+     total (a^.hd, codigo1, codigo2)
+ end;
+var
+ aux: real;
+ codigo1, codigo2: integer;
+begin
+ 
+ writeln ('ingrese codigo 1');
+ readln (codigo1);
+ writeln ('ingrese codigo 2');
+ readln (codigo2);
+ 
+ if (a = nil) then
+  writeln ('el arbol esta vacio')
+ else
+  aux:= total (a,codigo1,codigo2);
+    
+ if (aux = 0) then 
+  writeln ('0 pesos')
+ else
+  writeln ('el monto total es ', aux);
+end;
 
 var // pp //
  a: arbol;
@@ -176,8 +202,6 @@ begin
  incisoA (a);
  incisoB (a);
  incisoC (a); // preciso conciso perfecto //
- incisoD (a); // ni idea //
- 
-
+ incisoD (a); 
+ incisoE (a); // funciono una vez // 
 end.
-  
