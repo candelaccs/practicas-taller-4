@@ -1,0 +1,183 @@
+program ejercicio1;
+
+type
+ 
+  venta = record 
+   codventa: integer;
+   codproducto: integer;
+   unidades: integer;
+   precio: real;
+  end;
+  
+  producto = record
+   codigo: integer;
+   totunidades: integer;
+   totmonto: real;
+  end;
+  
+  arbol = ^nodo;
+  nodo = record
+   dato: producto;
+   hi: arbol;
+   hd: arbol;
+  end;
+  
+procedure incisoA (var a: arbol);
+
+ procedure leer (var v: venta);
+ begin
+  writeln ('ingrese codigo de venta');
+  readln (v.codventa);
+  if (v.codventa <> -1) then begin
+   writeln ('ingrese codigo de producto');
+   readln (v.codproducto);
+   writeln ('ingrese unidades vendidas');
+   readln (v.unidades);
+   writeln ('ingrese el precio por unidad');
+   readln (v.precio);
+  end;
+ end;
+ 
+ procedure agregar (var a: arbol; v: venta);
+ 
+  procedure armar (var p: producto; v: venta);
+  begin
+   p.codigo:= v.codproducto;
+   p.totunidades:= v.unidades;
+   p.totmonto:= v.unidades * v.precio;
+  end;
+  
+ var
+  p: producto;
+ begin
+  if (a = nil) then begin
+   new (a);
+   armar (p, v);
+   a^.dato:= p;
+   a^.hi:= nil;
+   a^.hd:= nil;
+  end
+ else
+  if ( v.codproducto = a^.dato.codigo) then begin
+   a^.dato.totunidades:= a^.dato.totunidades + v.unidades;
+   a^.dato.totmonto:= a^.dato.totmonto + (v.unidades * v.precio);    
+  end
+  else
+   if (v.codproducto < a^.dato.codigo) then
+    agregar (a^.hi, v)
+   else
+    agregar (a^.hd, v);
+ end;  
+var
+ v: venta;
+begin
+ a:= nil;
+ writeln ('por favor ingrese las ventas');
+ writeln;
+ leer (v);
+ while (v.codventa <> -1) do begin
+  agregar (a, v);
+  writeln ('---------------');
+  leer (v);
+ end;
+end;
+
+procedure incisoB (a: arbol); 
+
+ procedure imprimir (a: arbol);
+ var
+  p: producto;
+ begin
+   if (a <> nil) then begin
+    imprimir (a^.hi);
+    p:= a^.dato;
+    writeln ('el monto total del producto con codigo ',  p.codigo, ' es ', p.totmonto, ' con una cantidad de ', p.totunidades, ' vendidas ');
+    imprimir (a^.hd);
+   end;
+ end;
+
+begin
+ 
+ if (a = nil) then
+  writeln ('la lista esta vacia')
+ else
+  imprimir (a);
+  
+end;
+
+procedure incisoC (a: arbol);
+ 
+ procedure maximo (a: arbol; var max: integer; var codmax: integer);
+ begin
+  if (a <> nil) then begin
+   if (a^.dato.totunidades > max) then begin
+    max:= a^.dato.totunidades;
+    codmax:= a^.dato.codigo
+   end
+   else
+    maximo (a^.hi, max, codmax);
+    maximo (a^.hd, max, codmax);
+  end;
+ end;
+
+var
+ codmax, max: integer;
+begin
+ 
+ max:= -1;
+ maximo (a, max, codmax);
+ if ( max = -1) then
+  writeln ('el arbol esta vacio')
+ else
+  writeln ('el codigo de producto con mayores ventas es ', codmax);
+  
+end;
+
+procedure incisoD (a: arbol);
+ 
+ function buscar (a: arbol; codigo: integer): integer;
+ begin
+  if (a = nil) then
+   buscar:= 0
+  else
+   if (a^.dato.codigo < codigo) then
+    buscar:= buscar (a^.hi, codigo) +1
+   else
+    if (a^.dato.codigo > codigo) then
+    buscar (a^.hi, codigo);
+ end;
+    
+var
+ codigo, bus: integer;
+begin
+ 
+ writeln ('ingrese un codigo');
+ readln (codigo);
+ 
+ bus:= buscar (a, codigo);
+ 
+ if (bus = 0) then
+  writeln ('la lista esta vacia')
+ else
+  writeln ('la cantidad de codigos menores a ', codigo, ' es ', bus);
+ 
+end;
+
+
+
+
+
+
+
+var // pp //
+ a: arbol;
+begin
+ 
+ incisoA (a);
+ incisoB (a);
+ incisoC (a); // preciso conciso perfecto //
+ incisoD (a); // ni idea //
+ 
+
+end.
+  
